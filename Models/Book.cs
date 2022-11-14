@@ -8,7 +8,7 @@ public class Book
 
     public string? Description { get; set; }
 
-    public IFormFile? Image { get; set; }
+    public byte[]? Image { get; set; }
     [DataType(DataType.Date)]
     public DateTime Date { get; set; }
 
