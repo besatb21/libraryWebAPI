@@ -15,8 +15,8 @@ public class Book
     public string? CreatedBy { get; set; }
 
     public int AuthorId { get; set; }
-    public Author? Author { get; set; }
+    // public Author? Author{get;set;}
     // many to manye 
-    public ICollection<Category> Categories { get; set; }
+    public ICollection<Category>? Categories { get; set; }
 }
 

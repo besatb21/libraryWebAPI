@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.CodeAnalysis;
+using LibraryApp.Models;
 
 namespace LibraryApp.Models
 {
@@ -14,5 +15,7 @@ namespace LibraryApp.Models
         public DbSet<Author> Authors {get; set;}  = null!;
 
         public DbSet<Category> Categories {get;set;} = null!;
+
+        public DbSet<LibraryApp.Models.User> User { get; set; }
     }
 }

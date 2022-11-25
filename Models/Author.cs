@@ -1,6 +1,8 @@
 
 namespace LibraryApp.Models;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
 public class Author
 {
@@ -14,5 +16,10 @@ public class Author
 
     public string? CreatedBy { get; set; }
 
-    public List<Book> Books { get; set; }
+    public ICollection<Book>? Books { get; set; }
+
+    public static explicit operator Author(Task<ActionResult<Author>> v)
+    {
+        throw new NotImplementedException();
+    }
 }

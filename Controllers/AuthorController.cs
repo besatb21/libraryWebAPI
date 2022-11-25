@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LibraryApp.Models;
-
-// checkout LINQ
 
 namespace LibraryApp.Controllers
 {
@@ -39,9 +33,11 @@ namespace LibraryApp.Controllers
             {
                 return NotFound();
             }
-
             return author;
+
+
         }
+
 
         // PUT: api/Author/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -104,6 +100,35 @@ namespace LibraryApp.Controllers
         private bool AuthorExists(int id)
         {
             return _context.Authors.Any(e => e.Id == id);
+        }
+
+
+        [HttpPatch("{id}")]
+        public IActionResult JsonPatchWithModelState(
+            int id,
+       [FromBody] JsonPatchDocument<Author> patchDoc)
+        {
+                var author =_context.Authors.Find(id);
+
+               patchDoc.ApplyTo(author);
+
+                 return new ObjectResult(author);
+            // if (patchDoc != null)
+            // {
+
+            //     patchDoc.ApplyTo(customer, ModelState);
+
+            //     if (!ModelState.IsValid)
+            //     {
+            //         return BadRequest(ModelState);
+            //     }
+
+            //     return new ObjectResult(customer);
+            // }
+            // else
+            // {
+            //     return BadRequest(ModelState);
+            // }
         }
     }
 }

@@ -18,5 +18,5 @@ public class Category
 
     public string? CreatedBy { get; set; }
 
-    public int BookId { get; set; }
- public ICollection<Book> Books { get; set; }}
+    public int? BookId { get; set; }
+ public ICollection<Book>? Books { get; set; }}

@@ -22,6 +22,7 @@ namespace LibraryApp.Controllers
 
         // GET: api/Book
         [HttpGet]
+
         public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
         {
             return await _context.Books.ToListAsync();
