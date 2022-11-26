@@ -1,82 +1,114 @@
-// import { ImageThumb } from '../../components/ImageUpload';
-import axios from "axios";
-import React from "react";
-import { BOOK_LIST_URL } from '../../constants/constants'
-
+import React, { useState } from 'react';
 import '../../styles.css'
-export default class CategoryAddUpdate extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { name: '', description: '', author: Object, file: '' };
-        // Handles file upload event and updates state
-        this.handleUpload = this.handleUpload.bind(this);
-        this.handleInputChange = this.handleInputChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import { MdAdd } from 'react-icons/md';
+import { AUTHOR_LIST_URL, USER_URL, AUTHOR } from '../../constants';
+import axios from "axios";
+import { useNavigate } from 'react-router-dom';
+
+
+export default function CategoryAddUpdate() {
+
+    const navigate = useNavigate();
+
+    const [validationError, setValidationError] = useState('');
+    const [bio, setBio] = useState('');
+    const [name, setName] = useState('');
+
+    let createdAt = new Date();
+
+    let data = {
+        "name": name,
+        "bio": bio,
+        "createdAt": formatDate(createdAt),
+        "createdBy": localStorage.getItem('role'),
+        "books": null,
+        "user_id": 0
+    }
+    function formatDate(date) {
+        let month = date.getMonth() + 1;
+        return date.getFullYear() + "-" + month + "-" + date.getDate();
     }
 
-    handleUpload(event) {
-        this.setState({ "file": event.target.files[0] });
+    async function onSubmit() {
+
+
+        let userData = {
+            "role": AUTHOR,
+            "username": name + name,
+            "password": "hello" + name, 
+            "createdAt":formatDate(createdAt)
+        }
+        await axios.post(USER_URL, userData)
+            .then((user_res) => {
+                console.log(user_res);
+                data.user_id = user_res.data.id;
+                addAuthor();
+            });
+
     }
+    async function addAuthor() {
+        await    axios.post(AUTHOR_LIST_URL, data)
+        .then((response) => {
+            console.log(response);
 
-    handleInputChange(event) {
-        const target = event.target;
-        const value = target.type === 'checkbox' ? target.checked : target.value;
-        const name = target.name;
-
-        this.setState({
-            [name]: value
-        });
-    }
-
-
-    async handleSubmit(event) {
-       let author={name:"string",bio:"string",createdAt:"2022-11-16T00:00:00",createdBy:"string",books:null}
-       let data = {name:this.state.name, description:this.state.description, author:author };
-       await axios.post(BOOK_LIST_URL,data)
-            .then((response) => {
-                console.log(response);
-                // this.postImage(this.state.file, BASE_LIST_URL+response.data.id)
-
+            navigate('/author/list')
         })
-            .catch((err) => { console.log(err) });
-       
-            event.preventDefault();
+        .catch((err) => { console.log(err) });
+
     }
-    postImage = async (imageFile, url) => {
-        var formData = new FormData()
-        formData.append('image', imageFile)
-        const response = await axios
-            .post(url, formData, { "Content-Type": "multipart/form-data" })
-            .then(() => { console.log("succesful POST request"); })
-            .catch((err) => console.log(err));
-
-        // if (response) {
-        //     setItems(response.data);
-        // }
-    };
-
-    render() {
-
-        return (
+    return (
+        <>
             <div className='form-div'>
-                <form  className='form-body' >
-                    <div className="form-group" >
-                        <label htmlFor="exampleInputEmail1">Title:</label>
-                        <input required name='name' type="text" value={this.state.name} onChange={this.handleInputChange} className="form-control" id="exampleInputEmail1" placeholder="Enter title" />
+
+                <Box
+                    component="form"
+                    sx={{
+                        '& .MuiTextField-root': { m: 1, width: '25ch' },
+                    }}
+                    noValidate
+                    autoComplete="off"
+                >
+                    <div>
+                        <TextField
+                            name="name"
+                            size="small"
+                            error={false}
+                            id="outlined"
+                            label="Name"
+                            value={name}
+                            onChange={(event) => { setName(event.target.value) }}
+                        />
                     </div>
-                    <div className="form-group">
-                        <label htmlFor="exampleInputPassword1">Description</label>
-                        <textarea required name='description' value={this.state.description} onChange={this.handleInputChange} className="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                    <div>
+                        <TextField
+                            id="outlined-multiline-flexible"
+                            label="Bio"
+                            size="small"
+                            name="bio"
+                            multiline
+                            maxRows={4}
+                            value={bio}
+                            onChange={(event) => { setBio(event.target.value) }}
+                        />
                     </div>
 
-                    <div className="form-group">
-                        <label htmlFor="exampleFormControlFile1">Add book cover (image):</label>
-                        <input type="file" onChange={this.handleUpload} />
-                    </div>
-                    <button type="button" onClick={this.handleSubmit} className="btn btn-primary" >Submit</button>
-                </form>
+
+                </Box>
+                <div style={{ marginTop: 20 + 'px' }}>
+                    <Button size="medium" variant="contained" disableElevation onClick={onSubmit}>
+                        <MdAdd size={20} />Shto
+                    </Button>
+                </div>
+
             </div>
-        );
 
-    }
+
+
+
+        </>
+
+    );
 }

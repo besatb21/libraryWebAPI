@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LibraryApp.Models;
+using Microsoft.AspNetCore.OData;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace LibraryApp.Controllers
 {
@@ -28,6 +30,9 @@ namespace LibraryApp.Controllers
             return await _context.Books.ToListAsync();
         }
 
+
+
+
         // GET: api/Book/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Book>> GetBook(int id)
@@ -36,7 +41,7 @@ namespace LibraryApp.Controllers
 
             if (book == null)
             {
-                return NotFound();
+                return null;
             }
 
             return book;

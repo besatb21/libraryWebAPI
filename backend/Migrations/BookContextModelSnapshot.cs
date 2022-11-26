@@ -54,6 +54,9 @@ namespace LibraryApp.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("User_id")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime2");
 
@@ -95,7 +98,7 @@ namespace LibraryApp.Migrations
                     b.ToTable("Books");
                 });
 
-            modelBuilder.Entity("LibraryApp.Models.Category", b =>
+            modelBuilder.Entity("LibraryApp.Models.BookCategory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -103,8 +106,24 @@ namespace LibraryApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("BookId")
+                    b.Property<int>("BookId")
                         .HasColumnType("int");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BookCategoryTable");
+                });
+
+            modelBuilder.Entity("LibraryApp.Models.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -166,13 +185,11 @@ namespace LibraryApp.Migrations
 
             modelBuilder.Entity("LibraryApp.Models.Book", b =>
                 {
-                    b.HasOne("LibraryApp.Models.Author", "Author")
+                    b.HasOne("LibraryApp.Models.Author", null)
                         .WithMany("Books")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("LibraryApp.Models.Author", b =>

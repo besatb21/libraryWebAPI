@@ -110,25 +110,23 @@ namespace LibraryApp.Controllers
         {
                 var author =_context.Authors.Find(id);
 
-               patchDoc.ApplyTo(author);
+           
+            if (patchDoc != null)
+            {
 
-                 return new ObjectResult(author);
-            // if (patchDoc != null)
-            // {
+                patchDoc.ApplyTo(author, ModelState);
 
-            //     patchDoc.ApplyTo(customer, ModelState);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
 
-            //     if (!ModelState.IsValid)
-            //     {
-            //         return BadRequest(ModelState);
-            //     }
-
-            //     return new ObjectResult(customer);
-            // }
-            // else
-            // {
-            //     return BadRequest(ModelState);
-            // }
+                return new ObjectResult(author);
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
         }
     }
 }

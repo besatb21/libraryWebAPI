@@ -8,6 +8,7 @@ public class Author
 {
     public int Id { get; set; }
 
+    public int User_id {get;set;}
     public string? Name { get; set; }
     public string? Bio { get; set; }
 
@@ -18,8 +19,4 @@ public class Author
 
     public ICollection<Book>? Books { get; set; }
 
-    public static explicit operator Author(Task<ActionResult<Author>> v)
-    {
-        throw new NotImplementedException();
-    }
 }

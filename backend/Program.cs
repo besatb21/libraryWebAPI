@@ -1,22 +1,31 @@
 using LibraryApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.OData.Extensions;
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
     .AddNewtonsoftJson();
 
+
 IConfigurationBuilder conf = new ConfigurationBuilder().AddJsonFile("appsettings.json", false, true);
 IConfigurationRoot root = conf.Build();
 
-JsonConvert.DefaultSettings = () => new JsonSerializerSettings {
-     Formatting = Newtonsoft.Json.Formatting.Indented,
-     ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+
+
+
+
+
+JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+{
+    Formatting = Newtonsoft.Json.Formatting.Indented,
+    ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
 };
+
 // Add services to the container.
 
 // builder.Services.AddControllers();
@@ -72,9 +81,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+
 app.UseAuthentication();
+
 app.UseAuthorization();
 
+// app.UseMvc(routeBuilder =>
+//  {
+//      routeBuilder.EnableDependencyInjection();
+//      routeBuilder.Select().OrderBy().Filter();
+//  });
 app.MapControllers();
 app.Run();
 

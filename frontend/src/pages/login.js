@@ -28,9 +28,12 @@ export default function LoginComponent() {
         await axios.post(AUTHENTICATION, { "username": username, "password": password })
             .then((res) => {
                 // console.log(res.data['user']);
+                
                 localStorage.setItem("token", res.data['token']);
                 localStorage.setItem("username", res.data['user'].username);
                 localStorage.setItem("role", res.data['user'].role);
+                localStorage.setItem("author_id", res.data['user'.id]);
+
                 if (errorMessages.length == 0)
                 setLoggedOut(false);
     

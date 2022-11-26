@@ -26,13 +26,14 @@ export function TableList(props) {
   const navigate = useNavigate();
 
   const fetchProducts = async () => {
-    const response = await axios
+     await axios
       .get(props.URL)
+      .then((response)=>{
+      setItems(response.data);
+      })
       .catch((err) => console.log(err));
 
-    if (response) {
-      setItems(response.data);
-    }
+    
   };
 
 
@@ -59,23 +60,25 @@ export function TableList(props) {
 
   function onEdit() {
     navigate(props.navigate);
-
   }
 
   const onDelete = (event) => {
     setOpen(true);
     setItemToBeDeleted(event);
-    // setIdOfItem(event.id);
   }
 
   const handleClose = async (event) => {
     if (event) {
       //call axios delete 
-       let deleteEndpoint = props.URL + '/' + itemToBeDeleted.id;
-      await axios.delete(deleteEndpoint,{headers: {
-        Authorization: "Bearer "+localStorage.getItem('token')}}
+      let deleteEndpoint = props.URL + '/' + itemToBeDeleted.id;
+      await axios.delete(deleteEndpoint, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem('token')
+        }
+      }
       )
         .then(() => {
+          itemsData.length--;
           console.log("Successful deletion");
         }).catch((err) => { console.log(err); })
     }
@@ -84,8 +87,10 @@ export function TableList(props) {
 
 
   useEffect(() => {
+
     fetchProducts();
-  },[itemsData.length]);
+
+  }, [itemsData.length]);
 
 
   return (
@@ -111,7 +116,7 @@ export function TableList(props) {
               </DialogContent>
 
               <DialogActions>
-                <Button onClick={()=>{handleClose(false)}}>Disagree</Button>
+                <Button onClick={() => { handleClose(false) }}>Disagree</Button>
                 <Button onClick={() => handleClose(true)} autoFocus>
                   Agree
                 </Button>
