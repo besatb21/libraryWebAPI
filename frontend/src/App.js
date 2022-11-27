@@ -16,13 +16,20 @@ function App() {
   return <> <NavBar />
     <Routes>
       <Route path='/' element={<LoginComponent />} />
+
       <Route path='/home' element={<Home />} />
+
       <Route path='/author/list' element={<AuthorList />} />
       <Route path='/author/add' element={<AuthorAddUpdate/>}/>
-      <Route path='/book/add' element={<BookAddUpdateForm />} />
+      <Route path='/author/update/:id' element={<AuthorAddUpdate/>}/>
+
       <Route path='/books/list' element={<BookList />} />
+      <Route path='/book/add' element={<BookAddUpdateForm />} />
+      <Route path='/book/update/:id' element={<BookAddUpdateForm />} />
+
       <Route path='/category/list' element={<CategoryList />} />
       <Route path='/category/add' element={<CategoryAddUpdate />} />
+      <Route path='/category/update/:id' element={<CategoryAddUpdate />} />
     </Routes></>
 }
 

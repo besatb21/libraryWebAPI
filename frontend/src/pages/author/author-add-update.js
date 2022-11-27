@@ -3,16 +3,17 @@ import '../../styles.css'
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import { MdAdd } from 'react-icons/md';
+import { MdAdd,MdEdit } from 'react-icons/md';
 import { AUTHOR_LIST_URL, USER_URL, AUTHOR } from '../../constants';
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
-
+import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
 
 export default function AuthorAddUpdate() {
 
     const navigate = useNavigate();
-
+    const params = useParams();
+    const [edit, setEdit] = useState(false);
     const [validationError, setValidationError] = useState('');
     const [bio, setBio] = useState('');
     const [name, setName] = useState('');
@@ -20,6 +21,7 @@ export default function AuthorAddUpdate() {
     let createdAt = new Date();
 
     let data = {
+        "id": params.id,
         "name": name,
         "bio": bio,
         "createdAt": formatDate(createdAt),
@@ -33,36 +35,67 @@ export default function AuthorAddUpdate() {
     }
 
     async function onSubmit() {
-
-
         let userData = {
             "role": AUTHOR,
             "username": name + name,
-            "password": "hello" + name, 
-            "createdAt":formatDate(createdAt)
+            "password": "hello" + name,
+            "createdAt": formatDate(createdAt)
         }
-        await axios.post(USER_URL, userData)
-            .then((user_res) => {
-                console.log(user_res);
-                data.user_id = user_res.data.id;
-                addAuthor();
-            });
+        if (edit) {
+            await axios.put(AUTHOR_LIST_URL + params.id, data)
+                .then((res) => {
+                    console.log(res);
+                    navigate('/author/list')
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+        }
+        else {
+            await axios.post(USER_URL, userData)
+                .then((user_res) => {
+                    console.log(user_res);
+                    data.user_id = user_res.data.id;
+                    addAuthor();
+                });
+        }
+
 
     }
     async function addAuthor() {
-        await    axios.post(AUTHOR_LIST_URL, data)
-        .then((response) => {
-            console.log(response);
-
-            navigate('/author/list')
-        })
-        .catch((err) => { console.log(err) });
-
+        await axios.post(AUTHOR_LIST_URL, data)
+            .then((response) => {
+                console.log(response);
+                navigate('/author/list')
+            })
+            .catch((err) => { console.log(err) });
     }
+
+    async function loadForm() {
+        await axios.get(AUTHOR_LIST_URL + params.id)
+            .then((res) => {
+                console.log(res);
+                setEdit(true);
+                data.user_id = res.data.user_id;
+                setBio(res.data.bio);
+                setName(res.data.name);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+
+    useEffect(() => {
+        loadForm();
+
+    }, [edit])
+
+
+
     return (
         <>
-            <div className='form-div'>
 
+            <div className='form-div'>
                 <Box
                     component="form"
                     sx={{
@@ -94,21 +127,18 @@ export default function AuthorAddUpdate() {
                             onChange={(event) => { setBio(event.target.value) }}
                         />
                     </div>
-
-
                 </Box>
                 <div style={{ marginTop: 20 + 'px' }}>
-                    <Button size="medium" variant="contained" disableElevation onClick={onSubmit}>
-                        <MdAdd size={20} />Shto
-                    </Button>
+                    {edit ? <Button size="medium" variant="contained" disableElevation onClick={onSubmit}>
+                        <MdEdit size={20} />Ruaj
+                    </Button> :
+                        <Button size="medium" variant="contained" disableElevation onClick={onSubmit}>
+                            <MdAdd size={20} />Shto
+                        </Button>}
+
                 </div>
 
             </div>
-
-
-
-
         </>
-
     );
 }

@@ -17,6 +17,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import AuthorList from "../pages/author/author-list";
 
 export function TableList(props) {
   const [items, setItems] = useState([]);
@@ -58,8 +59,9 @@ export function TableList(props) {
     [items]
   );
 
-  function onEdit() {
-    navigate(props.navigate);
+  function onEdit(id) {
+    // console.log(id);
+    navigate(props.navigate+id);
   }
 
   const onDelete = (event) => {
@@ -70,7 +72,7 @@ export function TableList(props) {
   const handleClose = async (event) => {
     if (event) {
       //call axios delete 
-      let deleteEndpoint = props.URL + '/' + itemToBeDeleted.id;
+      let deleteEndpoint = props.URL +  itemToBeDeleted.id;
       await axios.delete(deleteEndpoint, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem('token')
@@ -133,10 +135,10 @@ export function TableList(props) {
           <TableHead>
             <TableRow>
               {itemsColumns.map((colHeader) => (
-                <TableCell>{colHeader}</TableCell>
+                <TableCell>{colHeader.toLocaleUpperCase()}</TableCell>
               ))}
-              <TableCell>Edit</TableCell>
-              <TableCell>Delete</TableCell>
+              <TableCell>EDIT</TableCell>
+              <TableCell>{"Delete".toLocaleUpperCase()}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -150,7 +152,7 @@ export function TableList(props) {
                   </TableCell>
                 ))}
                 <TableCell key="edit">
-                  <Button size="small" variant="text" onClick={() => { onEdit(row) }}>
+                  <Button size="small" variant="text" onClick={() => { onEdit(row.id) }}>
                     <MdModeEdit size={20} />
                   </Button>
                 </TableCell>

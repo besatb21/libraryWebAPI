@@ -14,10 +14,10 @@ const CategoryList = () => {
         <div className="page">
 
             <div className="list-div">
-                <TableList title='CATEGORY LIST' URL={CATEGORY_LIST_URL} />
+                <TableList title='CATEGORY LIST' navigate='/category/update/' URL={CATEGORY_LIST_URL} />
             </div>
             <div className="list-div">
-                <button type="button" onClick={goToAdd} className="btn btn-primary">Shto artikull</button>
+                <button type="button" onClick={goToAdd} className="btn btn-primary">Shto kategori</button>
             </div>
 
         </div>

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from "react";
 import '../styles.css'
 import { AUTHENTICATION } from "../constants";
-
+import Home from "./home";
 
 export default function LoginComponent() {
 
@@ -78,8 +78,7 @@ export default function LoginComponent() {
                 </form>
 
 
-            </div></>:""}
-
+            </div></>:<Home/>}
 </>
     );
 

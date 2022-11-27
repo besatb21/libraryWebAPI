@@ -3,29 +3,31 @@ import '../../styles.css'
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import { MdAdd } from 'react-icons/md';
-import { AUTHOR_LIST_URL, USER_URL, AUTHOR } from '../../constants';
+import { Slider } from '@mui/material';
+import { MdAdd, MdEdit } from 'react-icons/md';
+import { CATEGORY_LIST_URL } from '../../constants';
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
-
+import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
 
 export default function CategoryAddUpdate() {
-
+    const params = useParams();
     const navigate = useNavigate();
-
+    const [edit, setEdit] = useState(false);
     const [validationError, setValidationError] = useState('');
-    const [bio, setBio] = useState('');
+    const [priority, setPriority] = useState('');
     const [name, setName] = useState('');
-
+    const [createdAtInitial, setCreatedAtInitial] = useState('');
+    const [createdBy, setCreatedBy] = useState('');
+    // name, prioriy, createdAt, createdBy 
     let createdAt = new Date();
 
-    let data = {
+    let categoryData = {
+        "id":params.id,
         "name": name,
-        "bio": bio,
+        "priority": priority,
         "createdAt": formatDate(createdAt),
-        "createdBy": localStorage.getItem('role'),
-        "books": null,
-        "user_id": 0
+        "createdBy": localStorage.getItem('username'),
     }
     function formatDate(date) {
         let month = date.getMonth() + 1;
@@ -33,32 +35,55 @@ export default function CategoryAddUpdate() {
     }
 
     async function onSubmit() {
+        console.log(categoryData);
+        if (edit) {
+            await axios.put(CATEGORY_LIST_URL+params.id, categoryData)
+                .then((res) => {
+                    console.log(res);
+                    navigate('/author/list')
 
-
-        let userData = {
-            "role": AUTHOR,
-            "username": name + name,
-            "password": "hello" + name, 
-            "createdAt":formatDate(createdAt)
+                })
+                .catch((err) => { console.log(err); });
         }
-        await axios.post(USER_URL, userData)
-            .then((user_res) => {
-                console.log(user_res);
-                data.user_id = user_res.data.id;
-                addAuthor();
-            });
+        else {
+            await axios.post(CATEGORY_LIST_URL, categoryData)
+                .then((res) => {
+                    console.log(res);   
+                    navigate('/author/list')
+
+                })
+                .catch((err) => { console.log(err); });
+
+        }
 
     }
-    async function addAuthor() {
-        await    axios.post(AUTHOR_LIST_URL, data)
-        .then((response) => {
-            console.log(response);
 
-            navigate('/author/list')
-        })
-        .catch((err) => { console.log(err) });
+    async function loadForm() {
+        if (params.id) {
+
+            await axios.get(CATEGORY_LIST_URL + params.id)
+                .then((res) => {
+                    // console.log(res);
+                    setEdit(true);
+                    setName(res.data.name);
+                    setCreatedAtInitial(res.data.createdAt);
+                    setCreatedBy(res.data.createdBy);
+                    setPriority(res.data.priority);
+                    // I am not sure whether to keep the createdAt same as it was, or edit it, so I am going to keep the original value
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+        }
 
     }
+
+    useEffect(() => {
+        loadForm();
+
+    }, [edit])
+
+
     return (
         <>
             <div className='form-div'>
@@ -71,36 +96,47 @@ export default function CategoryAddUpdate() {
                     noValidate
                     autoComplete="off"
                 >
-                    <div>
+                    <div style={{ marginBottom: "10px" }}>
                         <TextField
+                            style={{ margin: 0 + 'px' }}
                             name="name"
                             size="small"
                             error={false}
-                            id="outlined"
+                            id="oulined"
                             label="Name"
                             value={name}
                             onChange={(event) => { setName(event.target.value) }}
                         />
                     </div>
-                    <div>
-                        <TextField
-                            id="outlined-multiline-flexible"
-                            label="Bio"
-                            size="small"
-                            name="bio"
-                            multiline
-                            maxRows={4}
-                            value={bio}
-                            onChange={(event) => { setBio(event.target.value) }}
+
+                    <div style={{ marginTop: "20px" }}>
+                        <label style={{ margin: 0 + 'px' }} htmlFor='priority'>
+                            Priority:
+                        </label>
+
+                        <Slider
+                            id="priority"
+                            defaultValue={5}
+                            value={priority}
+                            onChange={(event) => { setPriority(event.target.value) }}
+                            valueLabelDisplay="auto"
+                            step={1}
+                            marks
+                            min={0}
+                            max={10}
                         />
                     </div>
 
 
                 </Box>
                 <div style={{ marginTop: 20 + 'px' }}>
-                    <Button size="medium" variant="contained" disableElevation onClick={onSubmit}>
-                        <MdAdd size={20} />Shto
-                    </Button>
+                    {edit ? <Button size="medium" variant="contained" disableElevation onClick={onSubmit}>
+                        <MdEdit size={20} />Ruaj
+                    </Button> :
+                        <Button size="medium" variant="contained" disableElevation onClick={onSubmit}>
+                            <MdAdd size={20} />Shto
+                        </Button>}
+
                 </div>
 
             </div>
