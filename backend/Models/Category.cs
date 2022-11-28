@@ -1,6 +1,5 @@
 
 using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
 
 namespace LibraryApp.Models;
 
@@ -19,6 +18,5 @@ public class Category
 
     public string? CreatedBy { get; set; }
 
-    [JsonIgnore]
-    public ICollection<Book>? Books { get; set; }
+    public ICollection<BookCategory>? BookCategories { get;set;}
 }

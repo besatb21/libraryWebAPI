@@ -1,15 +1,15 @@
 // import { ImageThumb } from '../../components/ImageUpload';
 import axios from "axios";
 import React, { useMemo, useState } from "react";
-import { AUTHOR_LIST_URL, BOOK_LIST_URL, CATEGORY_LIST_URL } from '../../constants/constants'
+import { AUTHOR_LIST_URL, BOOK_LIST_URL, CATEGORY_BOOK_LIST_URL, CATEGORY_LIST_URL } from '../../constants/constants'
 import '../../styles.css'
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { AiFillCodeSandboxCircle } from "react-icons/ai";
+import { useParams, useNavigate } from "react-router-dom";
 
 
 export default function BookAddUpdateForm() {
     const params = useParams();
+    const navigate = useNavigate();
 
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
@@ -22,41 +22,59 @@ export default function BookAddUpdateForm() {
     const [createdBy, setCreatedBy] = useState(localStorage.getItem('role'));
     const [categories, setCategories] = useState([]);
     const [edit, setEdit] = useState(false);
-    const tempArr = [];
 
 
     // author_id will be taken from the dropdown of authors==> admin
     //author_id will be taken localstorage ==> when role is author
 
-    async function handleSubmit(event) {
-        let data = {
-            "name": name, "description": description,
-            "authorId": author_id, "image": null,
-            "createdBy": createdBy, "date": date,
-            "categories": setCategories(tempArr)
-        };
+    async function handleCheckbox(e) {
+        const { value, checked } = e.target;
 
-        await axios.post(BOOK_LIST_URL, data)
+        if (checked) {
+            setCategories([...categories, { "categoryId": parseInt(value) }]);
+        }
+        else {
+            setCategories(categories.filter((x) => parseInt(x.categoryId) !== value));
+        }
+
+
+    }
+    async function handleSubmit() {
+        // let data = {
+        //     "name": name, "description": description,
+        //     "authorId": author_id, "image": null,
+        //     "createdBy": createdBy, "date": date,
+        //     "bookCategories": categories
+        // };
+        var formData = new FormData()
+        formData.append('image', file);
+        formData.append('name',name);
+        formData.append('description',description);
+        formData.append('authorId',author_id);
+        formData.append('createdBy', createdBy);
+        formData.append('date',date);
+        formData.append('bookCategories',categories);
+
+        console.log(categories);
+        await axios.post(BOOK_LIST_URL, formData, { "Content-Type": "multipart/form-data" })
             .then((response) => {
                 console.log(response);
-                this.postImage(file, BOOK_LIST_URL + response.data.id)
 
+                navigate('/books/list')
             })
             .catch((err) => { console.log(err) });
 
     }
-    async function postImage(imageFile, url) {
-        var formData = new FormData()
-        formData.append('image', imageFile);
-        await axios
-            .put(url, formData, { "Content-Type": "multipart/form-data" })
-            .then(() => { console.log("succesful POST request"); })
-            .catch((err) => console.log(err));
+    // async function postImage(imageFile, url) {
+    //      await axios
+    //         .put(url, formData, { "Content-Type": "multipart/form-data" })
+    //         .then(() => { console.log("succesful POST request"); })
+    //         .catch((err) => console.log(err));
 
-        // if (response) {
-        //     setItems(response.data);
-        // }
-    };
+    //     // if (response) {
+    //     //     setItems(response.data);
+    //     // }
+    // };
 
 
     async function getAllAuthors() {
@@ -77,23 +95,6 @@ export default function BookAddUpdateForm() {
             .catch(err => console.log(err));
     }
 
-    async function loadForm() {
-        if (params.id) {
-
-            await axios.get(BOOK_LIST_URL + params.id)
-                .then((res) => {
-                    setEdit(true);
-                    setName(res.data.name);
-                    setAuthorId(res.data.authorId);
-                    setDate(res.data.date);
-                    setDescription(res.data.description);
-                    setAuthorName(authorList.filter(x => x.id === res.data.authorId)[0].name);
-
-                })
-                .catch(err => console.log(err));
-
-        }
-    }
 
 
 
@@ -106,6 +107,25 @@ export default function BookAddUpdateForm() {
     useEffect(() => {
         getAllCategories();
         getAllAuthors();
+
+        async function loadForm() {
+            if (params.id) {
+
+                await axios.get(BOOK_LIST_URL + params.id)
+                    .then((res) => {
+                        setEdit(true);
+                        setName(res.data.name);
+                        setAuthorId(res.data.authorId);
+                        setDate(res.data.date);
+                        setDescription(res.data.description);
+                        setAuthorName(authorList.filter(x => x.id === res.data.authorId)[0].name);
+
+                    })
+                    .catch(err => console.log(err));
+
+            }
+        }
+
         loadForm();
 
     }, [edit]);
@@ -143,9 +163,7 @@ export default function BookAddUpdateForm() {
                     <label >Categories: </label>
                     {categoriesList.map((row) => (
                         <div className="form-check">
-                            <input type="checkbox" className="form-check-input" onChange={(e) => {
-                                if (e.target.checked === true) { tempArr.push(row) }
-                            }} value={row.id} />
+                            <input type="checkbox" className="form-check-input" onChange={(e) => handleCheckbox(e)} value={row.id} />
                             <span>{row.name}</span>
                         </div>
                     ))}

@@ -4,12 +4,14 @@ export const AUTHOR_LIST_URL = BASE_URL + 'api/author/';
 
 export const BOOK_LIST_URL = BASE_URL + 'api/book/';
 
+export const BOOK_COVER = BOOK_LIST_URL + 'image-file/';
+
 export const CATEGORY_LIST_URL = BASE_URL + 'api/category/';
+
+export const CATEGORY_BOOK_LIST_URL = BASE_URL + 'api/bookcategory/'
 
 export const USER_URL = BASE_URL + 'api/user/';
 
 export const AUTHENTICATION = BASE_URL + 'api/login/';
-
-
 
 export const AUTHOR = 'Author';

@@ -14,7 +14,7 @@ const BookList = () => {
         <div className="page">
 
             <div className="list-div">
-                <TableList title='LISTA E LIBRAVE' navigate='/book/update/' URL={BOOK_LIST_URL} />
+                <TableList title='LISTA E LIBRAVE' images={true} navigate='/book/update/' URL={BOOK_LIST_URL} />
             </div>
             <div className="list-div">
                 <button type="button" onClick={goToAdd} className="btn btn-primary">Shto artikull</button>

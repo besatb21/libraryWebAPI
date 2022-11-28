@@ -5,19 +5,21 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.OData.Extensions;
-
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddControllers()
+builder.Services.AddControllers(options =>
+ {
+     var jsonInputFormatter = options.InputFormatters
+         .OfType<Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonInputFormatter>()
+         .Single();
+     jsonInputFormatter.SupportedMediaTypes.Add("image/*");
+ })
     .AddNewtonsoftJson();
 
 
 IConfigurationBuilder conf = new ConfigurationBuilder().AddJsonFile("appsettings.json", false, true);
 IConfigurationRoot root = conf.Build();
-
-
-
-
 
 
 JsonConvert.DefaultSettings = () => new JsonSerializerSettings
@@ -82,6 +84,20 @@ if (app.Environment.IsDevelopment())
 }
 
 
+app.UseStaticFiles();
+// app.UseStaticFiles(new StaticFileOptions()
+// {
+//     FileProvider = new PhysicalFileProvider(
+//         Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot", "images")),
+//     RequestPath = new PathString("/images")
+// });
+
+// app.UseDirectoryBrowser(new DirectoryBrowserOptions()
+// {
+//     FileProvider = new PhysicalFileProvider(
+//         Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot", "images")),
+//     RequestPath = new PathString("/images")
+// });
 
 app.UseAuthentication();
 

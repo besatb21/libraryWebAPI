@@ -19,6 +19,8 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import AuthorList from "../pages/author/author-list";
 
+
+
 export function TableList(props) {
   const [items, setItems] = useState([]);
   const [open, setOpen] = useState(false);
@@ -27,14 +29,14 @@ export function TableList(props) {
   const navigate = useNavigate();
 
   const fetchProducts = async () => {
-     await axios
+    await axios
       .get(props.URL)
-      .then((response)=>{
-      setItems(response.data);
+      .then((response) => {
+        setItems(response.data);
       })
       .catch((err) => console.log(err));
 
-    
+
   };
 
 
@@ -44,15 +46,8 @@ export function TableList(props) {
     () =>
       items[0]
         ? Object.keys(items[0])
-          .filter((key) => (key !== "id" && key !== "createdAt" && key !== "createdBy"))
+          .filter((key) => (key !== "id" && key !== "createdAt" && key !== "createdBy" && key!=="imageUrl"))
           .map((key) => {
-            // if (key === "image")
-            //   return {
-            //     Header: key,
-            //     accessor: key,
-            //     Cell: ({ value }) => <img alt=' ' src={value} width="100" />,
-            //   };
-
             return key;
           })
         : [],
@@ -61,7 +56,7 @@ export function TableList(props) {
 
   function onEdit(id) {
     // console.log(id);
-    navigate(props.navigate+id);
+    navigate(props.navigate + id);
   }
 
   const onDelete = (event) => {
@@ -72,7 +67,7 @@ export function TableList(props) {
   const handleClose = async (event) => {
     if (event) {
       //call axios delete 
-      let deleteEndpoint = props.URL +  itemToBeDeleted.id;
+      let deleteEndpoint = props.URL + itemToBeDeleted.id;
       await axios.delete(deleteEndpoint, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem('token')
@@ -148,7 +143,7 @@ export function TableList(props) {
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 {itemsColumns.map((col) => (
                   <TableCell>
-                    {row[col]}
+                    {col === "image"  ? <img alt={row[col]} src={"http://localhost:5006/api/Book/images-byte/"+row.id} width="200" /> : row[col]}
                   </TableCell>
                 ))}
                 <TableCell key="edit">

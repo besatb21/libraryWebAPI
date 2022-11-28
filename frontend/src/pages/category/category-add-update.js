@@ -40,7 +40,7 @@ export default function CategoryAddUpdate() {
             await axios.put(CATEGORY_LIST_URL+params.id, categoryData)
                 .then((res) => {
                     console.log(res);
-                    navigate('/author/list')
+                    navigate('/category/list')
 
                 })
                 .catch((err) => { console.log(err); });
