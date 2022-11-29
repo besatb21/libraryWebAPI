@@ -26,7 +26,6 @@ function App() {
     <Route path='/' element={<NavBar />} /> 
     <Route path='/login' element={<LoginComponent />} /> 
     <Route path='/logout' element={<LogoutComponent/>}/>
-      {auth &&
         <>
           <Route path='/home' element={<Home />} />
 
@@ -41,7 +40,7 @@ function App() {
           <Route path='/category/list' element={<CategoryList />} />
           <Route path='/category/add' element={<CategoryAddUpdate />} />
           <Route path='/category/update/:id' element={<CategoryAddUpdate />} />
-        </>}
+        </>
     </Routes>
     <Footer/>
     </>

@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-bottom: 50px;
     width: 100%;
 }
 
@@ -23,7 +24,7 @@
 
 .navbar.navbar-light.bg-dark {
     width: 100%;
-    position: absolute;
+    position: fixed;
     left: 0;
     bottom: 0;
     right: 0;

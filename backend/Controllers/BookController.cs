@@ -28,7 +28,6 @@ namespace LibraryApp.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        // GET: api/Book
         [HttpGet("Author/{author_id}")]
         public IQueryable<Book> GetBooks(int author_id)
         {
@@ -55,6 +54,7 @@ namespace LibraryApp.Controllers
 
         // GET: api/Book/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "Administrator ,Author")]
         public async Task<ActionResult<Book>> GetBook(int id)
         {
             var book = await _context.Books.FindAsync(id);
@@ -70,16 +70,19 @@ namespace LibraryApp.Controllers
         // PUT: api/Book/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBook(int id, [FromForm] Book book)
+        public async Task<IActionResult> PutBook(int id, Book book)
         {
+            //when using POST method, I also have to pass the bookId, 
+            //since when I debugged it , I realised that if I pass value 0, it does not recognize the entity
             if (id != book.Id)
             {
                 return BadRequest();
             }
 
             string uniqueFileName = UploadedFile(book);
-            // if (uniqueFileName != "")
-            book.ImageUrl = uniqueFileName;
+            if (uniqueFileName != "")
+                book.ImageUrl = uniqueFileName;
+
             _context.Entry(book).State = EntityState.Modified;
 
             try

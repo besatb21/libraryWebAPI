@@ -63,26 +63,19 @@ export default function BookAddUpdateForm() {
 
             }
         } else {
-            if (file == '') {
-                const img = document.getElementsByTagName('img')
-
-                fetch(img.src)
-                    .then(res => console.log(res));
-                // .then(blob => {
-                //     const imageFile = new File([blob], img.alt, blob)
-                //     console.log(imageFile)
-                //     setFile(imageFile);
-
-                // })
+            let data = {
+                "id": params.id,
+                'image': null, 'imageUrl': null, "name": name,
+                "description": description, "authorId": author_id,
+                "createdBy": createdBy, "date": date, "bookCategories": categories
             }
-            formData.append('id', params.id);
             if (name && description && author_id && createdBy && date && categories) {
-                // await axios.put(BOOK_LIST_URL, formData, { "Content-Type": "multipart/form-data" })
-                //     .then((response) => {
-                //         console.log(response);
-                //         navigate('/books/list')
-                //     })
-                //     .catch((err) => { console.log(err) });
+                await axios.put(BOOK_LIST_URL + params.id, data)
+                    .then((response) => {
+                        console.log(response);
+                        navigate('/books/list')
+                    })
+                    .catch((err) => { console.log(err) });
 
             }
         }
@@ -123,19 +116,21 @@ export default function BookAddUpdateForm() {
         async function loadForm() {
             if (params.id) {
 
-                await axios.get(BOOK_LIST_URL + params.id)
+                await axios.get(BOOK_LIST_URL + params.id,{headers:{'Authorization':"Bearer "+localStorage.getItem('token')}})
                     .then(async (res) => {
                         setEdit(true);
                         setName(res.data.name);
                         setAuthorId(res.data.authorId);
                         setDate(res.data.date);
                         setDescription(res.data.description);
-                        setAuthorName(authorList.filter(x => x.id === res.data.authorId)[0].name);
+                        if (localStorage.getItem('role') == "Administrator")
+                            setAuthorName(authorList.filter(x => x.id === res.data.authorId)[0]['name']);
                         setFileName(res.data.imageUrl);
                         // setCategories
                         await axios.get(CATEGORY_LIST_OF_BOOK + params.id)
                             .then((res) => {
                                 setCategories(res.data);
+                                console.log("hellooo: cate ,", res.data);
                             })
                             .catch((err) => { console.log(err) });
                     })
@@ -191,8 +186,9 @@ export default function BookAddUpdateForm() {
                             <span>{categories.filter(x => x == row.id).length == 1 ? <em><b>{row.name}</b></em> : row.name}</span>
                         </div>
                     ))}
-                    <br />
-                    <span><em><b>text in bold and emphasized is put for the current category</b></em></span>
+                    {edit &&
+                        <><br />
+                            <span><em><b>text in bold and emphasized is put for the current category</b></em></span></>}
                     <span className="error">{validateError}</span>
                     <br />
                     {edit ?

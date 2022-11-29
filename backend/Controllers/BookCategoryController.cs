@@ -28,15 +28,16 @@ namespace LibraryApp.Controllers
         }
 
         [HttpGet("book/{book_id}")]
-        public IQueryable<int> GetBookCategory(int book_id)
+        public IQueryable<BookCategory> GetBookCategory(int book_id)
         {
-            var bookCategory = from e in _context.BookCategory where e.BookId == book_id select e.CategoryId;
+            var bookCategory = from e in _context.BookCategory where e.BookId == book_id select e;
 
             return bookCategory;
         }
 
         // PUT: api/BookCategory/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+       
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBookCategory(int id, BookCategory bookCategory)
         {
