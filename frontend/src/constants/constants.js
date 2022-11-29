@@ -19,3 +19,4 @@ export const USER_URL = BASE_URL + 'api/user/';
 export const AUTHENTICATION = BASE_URL + 'api/login/';
 
 export const AUTHOR = 'Author';
+export const ADMIN = 'Administrator';

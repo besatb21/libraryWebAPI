@@ -95,7 +95,7 @@ export function TableList(props) {
 
       items[0]
         ? Object.keys(items[0])
-          .filter((key) => (key !== "id" && key !== "createdAt" && key !== "createdBy" && key !== "imageUrl" && key !== "bookCategories" && key !== "authorId"))
+          .filter((key) => ( key !== "createdAt" && key !== "createdBy" && key !== "books"&&key!=='bookCategories'  && key !== "authorId"))
           .map((key) => {
             return key;
           })
@@ -264,7 +264,7 @@ export function TableList(props) {
                   ))
                 }
                 {
-                  localStorage.getItem('role') == "Administrator" && <>
+                  localStorage.getItem('role') == "Administrator" &&props.book&& <>
                     <TableCell key="edit">
                       <Button size="small" variant="text" onClick={() => { onEdit(row['book'].id) }}>
                         <MdModeEdit size={20} />
@@ -272,6 +272,21 @@ export function TableList(props) {
                     </TableCell>
                     <TableCell key="delete">
                       <Button size="small" variant="text" onClick={() => { onDelete(row['book']) }}>
+                        <AiFillDelete size={20} />
+                      </Button>
+                    </TableCell>
+                  </>
+                }
+                  {
+                 props.book==false
+                  && <>
+                    <TableCell key="edit">
+                      <Button size="small" variant="text" onClick={() => { onEdit(row.id) }}>
+                        <MdModeEdit size={20} />
+                      </Button>
+                    </TableCell>
+                    <TableCell key="delete">
+                      <Button size="small" variant="text" onClick={() => { onDelete(row) }}>
                         <AiFillDelete size={20} />
                       </Button>
                     </TableCell>

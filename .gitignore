@@ -3,3 +3,6 @@ bin
 obj
 node_modules
 node_modules
+
+#images 
+/backend/wwwroot/images

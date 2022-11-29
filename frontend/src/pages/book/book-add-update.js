@@ -1,7 +1,7 @@
 // import { ImageThumb } from '../../components/ImageUpload';
 import axios from "axios";
 import React, { useMemo, useState } from "react";
-import { AUTHOR_LIST_URL, BOOK_COVER, BOOK_LIST_URL, CATEGORY_BOOK_LIST_URL, CATEGORY_LIST_OF_BOOK, CATEGORY_LIST_URL } from '../../constants/constants'
+import { AUTHOR_LIST_URL, BOOK_COVER, BOOK_LIST_URL, CATEGORY_BOOK_LIST_URL, AUTHOR, ADMIN, CATEGORY_LIST_OF_BOOK, CATEGORY_LIST_URL } from '../../constants/constants'
 import '../../styles.css'
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -14,7 +14,7 @@ export default function BookAddUpdateForm() {
 
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [author_id, setAuthorId] = useState(0);
+    const [author_id, setAuthorId] = useState( localStorage.getItem("role") == ADMIN ?author_id : parseInt(localStorage.author_id));
     const [authorName, setAuthorName] = useState('');
     const [file, setFile] = useState('');
     const [authorList, setAuthorList] = useState([]);
@@ -39,15 +39,16 @@ export default function BookAddUpdateForm() {
             setCategories(categories.filter((x) => x.categoryId !== parseInt(value)));
         }
     }
+   
 
     async function handleSubmit() {
-
+        setCreatedBy(localStorage.role === "Administator" ? ADMIN : AUTHOR);
         var formData = new FormData()
         formData.append('image', file);
         formData.append('imageUrl', "");
         formData.append('name', name);
         formData.append('description', description);
-        formData.append('authorId', localStorage.getItem("role") === "Administrator" ? author_id : localStorage.getItem('author_id'));
+        formData.append('authorId', author_id);
         formData.append('createdBy', createdBy);
         formData.append('date', date);
         formData.append('bookCategories', categories);
@@ -59,7 +60,6 @@ export default function BookAddUpdateForm() {
                         navigate('/books/list')
                     })
                     .catch((err) => { console.log(err) });
-
             }
         } else {
             let data = {
