@@ -95,7 +95,7 @@ export function TableList(props) {
 
       items[0]
         ? Object.keys(items[0])
-          .filter((key) => ( key !== "createdAt" && key !== "createdBy" && key !== "books"&&key!=='bookCategories'  && key !== "authorId"))
+          .filter((key) => (key !== "createdAt" && key !== "createdBy" && key !== "books" && key !== 'bookCategories' && key !== "authorId"))
           .map((key) => {
             return key;
           })
@@ -185,8 +185,8 @@ export function TableList(props) {
 
       <span
         className="navbar-brand mb-0 h1">{props.title}</span>
-      <TableContainer  component={Paper}>
-        <Table sx={{ minWidth: 400}} aria-label="simple table">
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 400 }} aria-label="simple table">
           <TableHead>
             {localStorage.getItem('role') == "Administrator" && props.book && <TableRow>
               {topColumns.map((colHeader) => (
@@ -264,7 +264,7 @@ export function TableList(props) {
                   ))
                 }
                 {
-                  localStorage.getItem('role') == "Administrator" &&props.book&& <>
+                  localStorage.getItem('role') == "Administrator" && props.book && <>
                     <TableCell key="edit">
                       <Button size="small" variant="text" onClick={() => { onEdit(row['book'].id) }}>
                         <MdModeEdit size={20} />
@@ -277,8 +277,8 @@ export function TableList(props) {
                     </TableCell>
                   </>
                 }
-                  {
-                 props.book==false
+                {
+                  props.book == false
                   && <>
                     <TableCell key="edit">
                       <Button size="small" variant="text" onClick={() => { onEdit(row.id) }}>

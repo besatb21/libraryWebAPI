@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Newtonsoft.Json;
-using Microsoft.AspNetCore.OData.Extensions;
-using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers(options =>
@@ -21,22 +19,17 @@ builder.Services.AddControllers(options =>
 IConfigurationBuilder conf = new ConfigurationBuilder().AddJsonFile("appsettings.json", false, true);
 IConfigurationRoot root = conf.Build();
 
-
 JsonConvert.DefaultSettings = () => new JsonSerializerSettings
 {
     Formatting = Newtonsoft.Json.Formatting.Indented,
     ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
 };
 
-// Add services to the container.
-
-// builder.Services.AddControllers();
 builder.Services.AddDbContext<BookContext>(opt =>
     opt.UseSqlServer("Server=localhost;Database=master;Trusted_Connection=True;"));
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -52,7 +45,6 @@ builder.Services.AddCors(options =>
                             .AllowAnyMethod();
                       });
 });
-
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -70,8 +62,6 @@ builder.Services
         };
     });
 
-
-// builder.Services.AddAuthorization();
 var app = builder.Build();
 
 app.UseCors(MyAllowSpecificOrigins);
@@ -83,18 +73,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
 app.UseStaticFiles();
 
 app.UseAuthentication();
 
 app.UseAuthorization();
 
-// app.UseMvc(routeBuilder =>
-//  {
-//      routeBuilder.EnableDependencyInjection();
-//      routeBuilder.Select().OrderBy().Filter();
-//  });
 app.MapControllers();
 app.Run();
 

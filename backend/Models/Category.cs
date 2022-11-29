@@ -1,6 +1,4 @@
-
 using System.ComponentModel.DataAnnotations;
-
 namespace LibraryApp.Models;
 
 
@@ -18,5 +16,5 @@ public class Category
 
     public string? CreatedBy { get; set; }
 
-    public ICollection<BookCategory>? BookCategories { get;set;}
+    public ICollection<BookCategory>? BookCategories { get; set; }
 }

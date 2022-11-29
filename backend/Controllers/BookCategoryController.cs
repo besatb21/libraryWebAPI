@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LibraryApp.Models;
@@ -30,15 +25,15 @@ namespace LibraryApp.Controllers
         [HttpGet("Grouped")]
         public IQueryable GetBookCategoryGrouped()
         {
-            
+
             var innerJoin = from b in _context.BookCategory
                             join a in _context.Categories
                             on b.CategoryId equals a.Id
                             select new { book = b.BookId, Category = a.Name };
 
-           return innerJoin.GroupBy(
-                    p => p.book,
-                     (key, g ) => new { id = key, categories = g.ToList() });
+            return innerJoin.GroupBy(
+                     p => p.book,
+                      (key, g) => new { id = key, categories = g.ToList() });
         }
 
         [HttpGet("book/{book_id}")]

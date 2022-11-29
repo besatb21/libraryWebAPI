@@ -45,38 +45,38 @@ export default function ReportPage() {
         <>
             <NavBar />
             <span style={{ textAlign: 'center', width: "100%" }} className="navbar-brand mb-0 h1">{"Author list sorted based on number of books".toLocaleUpperCase()}</span>
-        <div style={{display:"flex",flexDirection:"column", alignItems:"center"}}>
-         
-            <TableContainer component={Paper} sx={{width:"75%"}}>
-                <Table sx={{ minWidth: 400 }} aria-label="simple table">
-                    <TableHead>
-                        <TableRow >
-                            <TableCell  align="center" className='header' colSpan={columns.length}>AUTHOR</TableCell>
-                            <TableCell  align="center" className='header' >NR. BOOKS</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            {
-                                columns.map((colHeader) => (
-                                    <TableCell className="author_cell">{colHeader.toLocaleUpperCase()}</TableCell>
-                                ))
-                            }
-                            <TableCell className='action_cell'>BOOKS</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {itemsData.map((row) => (
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
 
-                            <TableRow>
-                                {columns.map((col) => (
-                                    <TableCell >{row['author'][col]}</TableCell>
-                                ))}
-                                <TableCell>{row['nr']}</TableCell>
-
+                <TableContainer component={Paper} sx={{ width: "75%" }}>
+                    <Table sx={{ minWidth: 400 }} aria-label="simple table">
+                        <TableHead>
+                            <TableRow >
+                                <TableCell align="center" className='header' colSpan={columns.length}>AUTHOR</TableCell>
+                                <TableCell align="center" className='header' >NR. BOOKS</TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer >
+                            <TableRow>
+                                {
+                                    columns.map((colHeader) => (
+                                        <TableCell className="author_cell">{colHeader.toLocaleUpperCase()}</TableCell>
+                                    ))
+                                }
+                                <TableCell className='action_cell'>BOOKS</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {itemsData.map((row) => (
+
+                                <TableRow>
+                                    {columns.map((col) => (
+                                        <TableCell >{row['author'][col]}</TableCell>
+                                    ))}
+                                    <TableCell>{row['nr']}</TableCell>
+
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer >
             </div>
         </>
     )

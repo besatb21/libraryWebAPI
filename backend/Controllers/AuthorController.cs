@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LibraryApp.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace LibraryApp.Controllers
 {
@@ -31,8 +30,6 @@ namespace LibraryApp.Controllers
                             select new { author = a, nr = _context.Books.Where(b => b.AuthorId == a.Id).Count() };
 
             return innerJoin.OrderByDescending(s => s.nr);
-
-
         }
 
         // GET: api/Author/5

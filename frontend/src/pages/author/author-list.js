@@ -16,7 +16,7 @@ const AuthorList = () => {
     }
     return (
         localStorage.length > 0 &&
-        <><NavBar/>
+        <><NavBar />
             <div className="page">
 
                 <div className="list-div">

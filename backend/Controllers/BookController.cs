@@ -1,15 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
 using Microsoft.AspNetCore.Mvc;
-using System.IO;
 using Microsoft.EntityFrameworkCore;
 using LibraryApp.Models;
-using Microsoft.AspNetCore.OData;
-using Microsoft.AspNetCore.OData.Query;
-using System.Text;
 using Microsoft.AspNetCore.Authorization;
 
 namespace LibraryApp.Controllers
@@ -67,11 +59,11 @@ namespace LibraryApp.Controllers
             return book;
         }
 
-         async Task<IActionResult> deleteExistingCategoriesAsync(Book book)
+        async Task<IActionResult> deleteExistingCategoriesAsync(Book book)
         {
 
             var bc_list = _context.BookCategory.Where(x => x.BookId == book.Id);
-            // deletin existing rows
+            // deleting existing rows
             foreach (var bc in bc_list)
             {
                 var bookcategory = bc;

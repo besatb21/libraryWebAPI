@@ -4,11 +4,6 @@ import { NavLink } from "react-router-dom"
 
 
 export const NavBar = () => {
-    //     const [auth, setAuth] = useState(false);
-
-    //     useEffect(() => {
-    // // 
-    //     }, [auth])
     return (<>
 
         <nav className="navbar navbar-light bg-light">

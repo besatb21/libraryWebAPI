@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using LibraryApp.Models;
 
 
 namespace LibraryApp.Models
@@ -11,11 +10,11 @@ namespace LibraryApp.Models
         {
         }
 
-       
-         protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<BookCategory>().HasKey(sc => new { sc.BookId, sc.CategoryId });
-    }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<BookCategory>().HasKey(sc => new { sc.BookId, sc.CategoryId });
+        }
 
         public DbSet<Book> Books { get; set; } = null!;
         public DbSet<Author> Authors { get; set; } = null!;

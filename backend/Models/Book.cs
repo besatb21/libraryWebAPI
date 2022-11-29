@@ -1,7 +1,6 @@
 namespace LibraryApp.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Newtonsoft.Json;
 
 public class Book
 {
@@ -12,9 +11,9 @@ public class Book
 
     // public byte[]? Image { get; set; }
     [NotMapped]
-    public IFormFile? Image {get;set;}
+    public IFormFile? Image { get; set; }
 
-    public string? ImageUrl {get;set;}
+    public string? ImageUrl { get; set; }
 
     [DataType(DataType.Date)]
     public DateTime Date { get; set; }

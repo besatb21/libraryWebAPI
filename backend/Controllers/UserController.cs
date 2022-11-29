@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LibraryApp.Models;
-using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
 namespace LibraryApp.Controllers
@@ -16,16 +15,6 @@ namespace LibraryApp.Controllers
         {
             _context = context;
         }
-
-
-        // [HttpGet("Admins")]
-        // [Authorize(Roles = "Administrator")]
-        // public IActionResult AdminsEndpoint()
-        // {
-        //     var currentUser = GetCurrentUser();
-
-        //     return Ok($"Hi {currentUser.Username}, you are an {currentUser.Role}");
-        // }
 
         // GET: api/User
         [HttpGet]
