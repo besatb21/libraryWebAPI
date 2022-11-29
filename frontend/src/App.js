@@ -12,6 +12,7 @@ import CategoryList from './pages/category/category-list';
 import CategoryAddUpdate from './pages/category/category-add-update';
 import { useEffect, useState } from 'react';
 import { Footer } from './components/Footer';
+import ReportPage from './pages/reportPage';
 function App() {
 
   const [auth, setAuth] = useState(false);
@@ -32,6 +33,7 @@ function App() {
           <Route path='/author/list' element={<AuthorList />} />
           <Route path='/author/add' element={<AuthorAddUpdate />} />
           <Route path='/author/update/:id' element={<AuthorAddUpdate />} />
+          <Route path='/author/sorted' element={<ReportPage />} />
 
           <Route path='/books/list' element={<BookList />} />
           <Route path='/book/add' element={<BookAddUpdateForm />} />

@@ -24,7 +24,16 @@ namespace LibraryApp.Controllers
             return await _context.Authors.ToListAsync();
         }
 
+        [HttpGet("Sorted")]
+        public IQueryable GetSortedAuthorList()
+        {
+            var innerJoin = from a in _context.Authors
+                            select new { author = a, nr = _context.Books.Where(b => b.AuthorId == a.Id).Count() };
 
+            return innerJoin.OrderByDescending(s => s.nr);
+
+
+        }
 
         // GET: api/Author/5
         [HttpGet("{id}")]
@@ -111,9 +120,9 @@ namespace LibraryApp.Controllers
             int id,
        [FromBody] JsonPatchDocument<Author> patchDoc)
         {
-                var author =_context.Authors.Find(id);
+            var author = _context.Authors.Find(id);
 
-           
+
             if (patchDoc != null)
             {
 

@@ -22,14 +22,18 @@ export const NavBar = () => {
 
                 <NavLink to='/author/list'><span className="navbar-brand mb-0 h1">Authors</span></NavLink>
 
-                <NavLink to='/category/list'><span className="navbar-brand mb-0 h1">Categories</span></NavLink></>
+                <NavLink to='/category/list'><span className="navbar-brand mb-0 h1">Categories</span></NavLink>
+
+                <NavLink to='/author/sorted'><span className="navbar-brand mb-0 h1">Report Page</span></NavLink>
+
+            </>
 
             }
 
             <div>
                 {
                     localStorage.length == 0 ?
-                        <NavLink to='/login'><span className="navbar-brand mb-0 h1">Login</span></NavLink>:
+                        <NavLink to='/login'><span className="navbar-brand mb-0 h1">Login</span></NavLink> :
                         <NavLink to='/logout'><span className="navbar-brand mb-0 h1">Logout {localStorage.getItem('username')}</span></NavLink>
 
                 }

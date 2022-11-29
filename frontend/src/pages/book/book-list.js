@@ -20,7 +20,7 @@ const BookList = () => {
             <div className="list-div">
                 <TableList title='LIST OF BOOKS' book={true} images={true} navigate='/book/update/' URL={BOOK_LIST_URL} />
             </div>
-            <div className="list-div">
+            <div className="list-div" style={{marginBottom:"50px"}}>
                 <button type="button" onClick={goToAdd} className="btn btn-primary">Add book</button>
             </div>
         </div>

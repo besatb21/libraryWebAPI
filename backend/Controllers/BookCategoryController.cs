@@ -27,6 +27,20 @@ namespace LibraryApp.Controllers
             return await _context.BookCategory.ToListAsync();
         }
 
+        [HttpGet("Grouped")]
+        public IQueryable GetBookCategoryGrouped()
+        {
+            
+            var innerJoin = from b in _context.BookCategory
+                            join a in _context.Categories
+                            on b.CategoryId equals a.Id
+                            select new { book = b.BookId, Category = a.Name };
+
+           return innerJoin.GroupBy(
+                    p => p.book,
+                     (key, g ) => new { id = key, categories = g.ToList() });
+        }
+
         [HttpGet("book/{book_id}")]
         public IQueryable<BookCategory> GetBookCategory(int book_id)
         {
@@ -37,7 +51,7 @@ namespace LibraryApp.Controllers
 
         // PUT: api/BookCategory/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-       
+
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBookCategory(int id, BookCategory bookCategory)
         {

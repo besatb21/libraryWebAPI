@@ -20,7 +20,7 @@ const AuthorList = () => {
             <div className="page">
 
                 <div className="list-div">
-                    <TableList title='LISTA E AUTOREVE' book={false} navigate='/author/update/' URL={AUTHOR_LIST_URL} />
+                    <TableList title='AUTHOR LIST' book={false} navigate='/author/update/' URL={AUTHOR_LIST_URL} />
 
                 </div>
                 <div className="list-div">

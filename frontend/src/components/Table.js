@@ -17,12 +17,13 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { BOOK_LIST_ADMIN_ROLE, BOOK_LIST_OF_AUTHOR, BOOK_COVER } from "../constants";
+import { BOOK_LIST_ADMIN_ROLE, BOOK_LIST_OF_AUTHOR, BOOK_COVER, CATEGORY_LIST_GROUPED } from "../constants";
 
 export function TableList(props) {
   const [items, setItems] = useState([]);
   const [open, setOpen] = useState(false);
   const [itemToBeDeleted, setItemToBeDeleted] = useState('');
+  const [catGroup, setCatGroup] = useState([]);
   const navigate = useNavigate();
 
   const fetchProducts = async () => {
@@ -39,19 +40,22 @@ export function TableList(props) {
           }
         });
 
+      await axios.get(CATEGORY_LIST_GROUPED)
+        .then((res) => { setCatGroup(res.data) });
+
     }
-    else if(!props.book){
+    else if (!props.book) {
       await axios
-      .get(props.URL, { headers: { 'Authorization': "Bearer " + localStorage.getItem('token') } })
-      .then((response) => {
-        setItems(response.data);
-        console.log(response.data);
-      })
-      .catch((err) => {
-        if (err.response.status == 401) {
-          localStorage.clear();
-        }
-      });
+        .get(props.URL, { headers: { 'Authorization': "Bearer " + localStorage.getItem('token') } })
+        .then((response) => {
+          setItems(response.data);
+          console.log(response.data);
+        })
+        .catch((err) => {
+          if (err.response.status == 401) {
+            localStorage.clear();
+          }
+        });
     }
     else {
 
@@ -91,13 +95,28 @@ export function TableList(props) {
 
       items[0]
         ? Object.keys(items[0])
-          .filter((key) => (key !== "id" && key !== "createdAt" && key !== "createdBy" && key !== "imageUrl" && key!=="bookCategories"&& key !== "authorId"))
+          .filter((key) => (key !== "id" && key !== "createdAt" && key !== "createdBy" && key !== "imageUrl" && key !== "bookCategories" && key !== "authorId"))
           .map((key) => {
             return key;
           })
         : [],
     [items]
   );
+
+
+  function getGroupCategories(book_id) {
+    var tempString = '';
+    catGroup.forEach(e => {
+      if (e.id == book_id) {
+        tempString += e.categories.map(c => { return c.category });
+      }
+
+    });
+
+    console.log(book_id);
+    console.log(tempString);
+    return tempString;
+  }
 
   function onEdit(id) {
     navigate(props.navigate + id);
@@ -164,9 +183,10 @@ export function TableList(props) {
 
 
 
-      {props.title}
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 400 }} aria-label="simple table">
+      <span
+        className="navbar-brand mb-0 h1">{props.title}</span>
+      <TableContainer  component={Paper}>
+        <Table sx={{ minWidth: 400}} aria-label="simple table">
           <TableHead>
             {localStorage.getItem('role') == "Administrator" && props.book && <TableRow>
               {topColumns.map((colHeader) => (
@@ -217,8 +237,14 @@ export function TableList(props) {
                   <>
                     {
                       itemsColumns.map((col) => (
+                        col == 'bookCategories' ?
+                          <TableCell className="book_cell">
 
-                        <TableCell className="book_cell">{col == 'image' ? < img src={BOOK_COVER + row.book.id}></img> : row['book'][col]}</TableCell>
+                            {getGroupCategories(parseInt(row['book'].id))}
+                          </TableCell>
+                          :
+                          <TableCell className="book_cell">{col == 'image' ? < img src={BOOK_COVER + row.book.id}></img> : row['book'][col]}</TableCell>
+
                       ))
                     }{
                       <TableCell className="author_cell">{row['author']}</TableCell>

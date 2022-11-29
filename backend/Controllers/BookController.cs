@@ -55,7 +55,7 @@ namespace LibraryApp.Controllers
         // GET: api/Book/5
         [HttpGet("{id}")]
         [Authorize(Roles = "Administrator ,Author")]
-        public async Task<ActionResult<Book>> GetBook(int id)
+        public async Task<ActionResult<Book>?> GetBook(int id)
         {
             var book = await _context.Books.FindAsync(id);
 
@@ -67,7 +67,7 @@ namespace LibraryApp.Controllers
             return book;
         }
 
-        public async Task<IActionResult> deleteExistingCategoriesAsync(Book book)
+         async Task<IActionResult> deleteExistingCategoriesAsync(Book book)
         {
 
             var bc_list = _context.BookCategory.Where(x => x.BookId == book.Id);
@@ -76,8 +76,9 @@ namespace LibraryApp.Controllers
             {
                 var bookcategory = bc;
                 _context.BookCategory.Remove(bookcategory);
+                await _context.SaveChangesAsync();
+
             }
-            await _context.SaveChangesAsync();
 
             return NoContent();
         }
@@ -97,15 +98,15 @@ namespace LibraryApp.Controllers
             if (uniqueFileName != "")
                 book.ImageUrl = uniqueFileName;
 
-           await deleteExistingCategoriesAsync(book);
+            await deleteExistingCategoriesAsync(book);
 
             foreach (var bc in book.BookCategories)
             {
-                if( _context.BookCategory.Where(bookcat=>bookcat==bc).Any())
+                if (_context.BookCategory.Where(bookcat => bookcat == bc).Any())
                     continue;
                 var bookcategory = bc;
                 _context.BookCategory.Add(bc);
-               await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
             }
 
@@ -151,10 +152,14 @@ namespace LibraryApp.Controllers
         public async Task<IActionResult> ReturnByteArray(int id)
         {
             var book = await _context.Books.FindAsync(id);
-            var FileName = book.ImageUrl;
-            byte[] imageArray = System.IO.File.ReadAllBytes(relativePath + FileName);
+            if (book != null)
+            {
+                var FileName = book.ImageUrl;
+                byte[] imageArray = System.IO.File.ReadAllBytes(relativePath + FileName);
+                return File(imageArray, MimeType);
 
-            return File(imageArray, MimeType);
+            }
+            return NoContent();
         }
 
 
