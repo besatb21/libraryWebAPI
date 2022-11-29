@@ -14,7 +14,7 @@ export default function BookAddUpdateForm() {
 
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [author_id, setAuthorId] = useState( localStorage.getItem("role") == ADMIN ?author_id : parseInt(localStorage.author_id));
+    const [author_id, setAuthorId] = useState( localStorage.getItem("role") == ADMIN ?0 : parseInt(localStorage.author_id));
     const [authorName, setAuthorName] = useState('');
     const [file, setFile] = useState('');
     const [authorList, setAuthorList] = useState([]);
