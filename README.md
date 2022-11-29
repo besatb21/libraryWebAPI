@@ -45,6 +45,7 @@ This user will be later used to logIn and add other authors from the UI.
 
 DESICLAIMERS:
 
+- a wwwroot/images folder must be created, I did not upload mine, since it contains images already, so I specified in the gitignore.
 -   I am aware that there is a discrepancy between the styling used in the book_add_update component and the styling used in the rest of the app. 
 This is because, I am used to Bootstrap for projects which I do not know the framework beforehand. As I got the hang of it, I used MUI more and more.
 - I have not hashed the password
