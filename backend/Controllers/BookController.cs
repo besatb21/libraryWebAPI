@@ -67,6 +67,20 @@ namespace LibraryApp.Controllers
             return book;
         }
 
+        public async Task<IActionResult> deleteExistingCategoriesAsync(Book book)
+        {
+
+            var bc_list = _context.BookCategory.Where(x => x.BookId == book.Id);
+            // deletin existing rows
+            foreach (var bc in bc_list)
+            {
+                var bookcategory = bc;
+                _context.BookCategory.Remove(bookcategory);
+            }
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
         // PUT: api/Book/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -82,6 +96,18 @@ namespace LibraryApp.Controllers
             string uniqueFileName = UploadedFile(book);
             if (uniqueFileName != "")
                 book.ImageUrl = uniqueFileName;
+
+           await deleteExistingCategoriesAsync(book);
+
+            foreach (var bc in book.BookCategories)
+            {
+                if( _context.BookCategory.Where(bookcat=>bookcat==bc).Any())
+                    continue;
+                var bookcategory = bc;
+                _context.BookCategory.Add(bc);
+               await _context.SaveChangesAsync();
+
+            }
 
             _context.Entry(book).State = EntityState.Modified;
 

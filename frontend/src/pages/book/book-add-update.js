@@ -31,14 +31,13 @@ export default function BookAddUpdateForm() {
 
     async function handleCheckbox(e) {
         const { value, checked } = e.target;
-
-        if (checked) {
-            setCategories([...categories, { "categoryId": parseInt(value) }]);
+        const existing = categories.filter(x => x.categoryId == parseInt(value)).length == 1 ? true : false;
+        if (checked && existing == false) {
+            setCategories([...categories, { "categoryId": parseInt(value), "bookId": params.id }]);
         }
         else {
-            setCategories(categories.filter((x) => parseInt(x.categoryId) !== value));
+            setCategories(categories.filter((x) => x.categoryId !== parseInt(value)));
         }
-        console.log({ value, checked });
     }
 
     async function handleSubmit() {
@@ -116,7 +115,7 @@ export default function BookAddUpdateForm() {
         async function loadForm() {
             if (params.id) {
 
-                await axios.get(BOOK_LIST_URL + params.id,{headers:{'Authorization':"Bearer "+localStorage.getItem('token')}})
+                await axios.get(BOOK_LIST_URL + params.id, { headers: { 'Authorization': "Bearer " + localStorage.getItem('token') } })
                     .then(async (res) => {
                         setEdit(true);
                         setName(res.data.name);
@@ -183,7 +182,7 @@ export default function BookAddUpdateForm() {
                     {categoriesList.map((row) => (
                         <div className="form-check">
                             <input type="checkbox" className="form-check-input" onChange={(e) => handleCheckbox(e)} value={row.id} />
-                            <span>{categories.filter(x => x == row.id).length == 1 ? <em><b>{row.name}</b></em> : row.name}</span>
+                            <span>{categories.filter(x => x['categoryId'] == row.id).length == 1 ? <em><b>{row.name}</b></em> : row.name}</span>
                         </div>
                     ))}
                     {edit &&
