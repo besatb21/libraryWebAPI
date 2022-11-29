@@ -3,11 +3,13 @@ import '../../styles.css'
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import { MdAdd,MdEdit } from 'react-icons/md';
+import { MdAdd, MdEdit } from 'react-icons/md';
 import { AUTHOR_LIST_URL, USER_URL, AUTHOR } from '../../constants';
 import axios from "axios";
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
+import { NavBar } from '../../components/Navbar';
+
 
 export default function AuthorAddUpdate() {
 
@@ -94,7 +96,7 @@ export default function AuthorAddUpdate() {
 
     return (
         <>
-
+            <NavBar />
             <div className='form-div'>
                 <Box
                     component="form"
@@ -132,7 +134,7 @@ export default function AuthorAddUpdate() {
                     {edit ? <Button size="medium" variant="contained" disableElevation onClick={onSubmit}>
                         <MdEdit size={20} />Ruaj
                     </Button> :
-                        <Button size="medium" variant="contained" disableElevation onClick={onSubmit}>
+                        <Button size="medium" variant="contained" disableElevation onClick={() => { onSubmit() }}>
                             <MdAdd size={20} />Shto
                         </Button>}
 

@@ -2,6 +2,7 @@
 import { React } from "react";
 
 import { useNavigate } from 'react-router-dom';
+import { NavBar } from "../../components/Navbar";
 import { TableList } from '../../components/Table'
 
 import { AUTHOR_LIST_URL } from '../../constants';
@@ -13,19 +14,21 @@ const AuthorList = () => {
     const goToAdd = () => {
         navigate('/author/add');
     }
-    return (<>
-        <div className="page">
+    return (
+        localStorage.length > 0 &&
+        <><NavBar/>
+            <div className="page">
 
-            <div className="list-div">
-                <TableList title='LISTA E AUTOREVE' navigate='/author/update/' URL={AUTHOR_LIST_URL} />
+                <div className="list-div">
+                    <TableList title='LISTA E AUTOREVE' book={false} navigate='/author/update/' URL={AUTHOR_LIST_URL} />
 
+                </div>
+                <div className="list-div">
+                    <button type="button" onClick={goToAdd} className="btn btn-primary">Add author</button>
+                </div>
             </div>
-            <div className="list-div">
-                <button type="button" onClick={goToAdd} className="btn btn-primary">Shto autor</button>
-            </div>
-        </div>
 
-    </>
+        </>
     );
 };
 

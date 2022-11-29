@@ -9,6 +9,7 @@ import { CATEGORY_LIST_URL } from '../../constants';
 import axios from "axios";
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
+import { NavBar } from '../../components/Navbar';
 
 export default function CategoryAddUpdate() {
     const params = useParams();
@@ -23,7 +24,7 @@ export default function CategoryAddUpdate() {
     let createdAt = new Date();
 
     let categoryData = {
-        "id":params.id,
+        "id": params.id,
         "name": name,
         "priority": priority,
         "createdAt": formatDate(createdAt),
@@ -37,7 +38,7 @@ export default function CategoryAddUpdate() {
     async function onSubmit() {
         console.log(categoryData);
         if (edit) {
-            await axios.put(CATEGORY_LIST_URL+params.id, categoryData)
+            await axios.put(CATEGORY_LIST_URL + params.id, categoryData)
                 .then((res) => {
                     console.log(res);
                     navigate('/category/list')
@@ -48,7 +49,7 @@ export default function CategoryAddUpdate() {
         else {
             await axios.post(CATEGORY_LIST_URL, categoryData)
                 .then((res) => {
-                    console.log(res);   
+                    console.log(res);
                     navigate('/author/list')
 
                 })
@@ -85,7 +86,7 @@ export default function CategoryAddUpdate() {
 
 
     return (
-        <>
+        <><NavBar/>
             <div className='form-div'>
 
                 <Box
@@ -136,14 +137,8 @@ export default function CategoryAddUpdate() {
                         <Button size="medium" variant="contained" disableElevation onClick={onSubmit}>
                             <MdAdd size={20} />Shto
                         </Button>}
-
                 </div>
-
             </div>
-
-
-
-
         </>
 
     );

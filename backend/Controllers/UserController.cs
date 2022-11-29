@@ -18,14 +18,14 @@ namespace LibraryApp.Controllers
         }
 
 
-        [HttpGet("Admins")]
-        [Authorize(Roles = "Administrator")]
-        public IActionResult AdminsEndpoint()
-        {
-            var currentUser = GetCurrentUser();
+        // [HttpGet("Admins")]
+        // [Authorize(Roles = "Administrator")]
+        // public IActionResult AdminsEndpoint()
+        // {
+        //     var currentUser = GetCurrentUser();
 
-            return Ok($"Hi {currentUser.Username}, you are an {currentUser.Role}");
-        }
+        //     return Ok($"Hi {currentUser.Username}, you are an {currentUser.Role}");
+        // }
 
         // GET: api/User
         [HttpGet]

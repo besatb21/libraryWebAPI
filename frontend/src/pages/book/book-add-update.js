@@ -1,11 +1,12 @@
 // import { ImageThumb } from '../../components/ImageUpload';
 import axios from "axios";
 import React, { useMemo, useState } from "react";
-import { AUTHOR_LIST_URL, BOOK_LIST_URL, CATEGORY_BOOK_LIST_URL, CATEGORY_LIST_URL } from '../../constants/constants'
+import { AUTHOR_LIST_URL, BOOK_COVER, BOOK_LIST_URL, CATEGORY_BOOK_LIST_URL, CATEGORY_LIST_OF_BOOK, CATEGORY_LIST_URL } from '../../constants/constants'
 import '../../styles.css'
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-
+import { NavBar } from "../../components/Navbar";
+import { MdAdd, MdEdit } from 'react-icons/md';
 
 export default function BookAddUpdateForm() {
     const params = useParams();
@@ -22,7 +23,8 @@ export default function BookAddUpdateForm() {
     const [createdBy, setCreatedBy] = useState(localStorage.getItem('role'));
     const [categories, setCategories] = useState([]);
     const [edit, setEdit] = useState(false);
-
+    const [validateError, setError] = useState('');
+    const [fileName, setFileName] = useState('');
 
     // author_id will be taken from the dropdown of authors==> admin
     //author_id will be taken localstorage ==> when role is author
@@ -36,45 +38,58 @@ export default function BookAddUpdateForm() {
         else {
             setCategories(categories.filter((x) => parseInt(x.categoryId) !== value));
         }
-
-
+        console.log({ value, checked });
     }
+
     async function handleSubmit() {
-        // let data = {
-        //     "name": name, "description": description,
-        //     "authorId": author_id, "image": null,
-        //     "createdBy": createdBy, "date": date,
-        //     "bookCategories": categories
-        // };
+
         var formData = new FormData()
         formData.append('image', file);
-        formData.append('name',name);
-        formData.append('description',description);
-        formData.append('authorId',author_id);
+        formData.append('imageUrl', "");
+        formData.append('name', name);
+        formData.append('description', description);
+        formData.append('authorId', localStorage.getItem("role") === "Administrator" ? author_id : localStorage.getItem('author_id'));
         formData.append('createdBy', createdBy);
-        formData.append('date',date);
-        formData.append('bookCategories',categories);
+        formData.append('date', date);
+        formData.append('bookCategories', categories);
+        if (edit == false) {
+            if (file && name && description && author_id && createdBy && date && categories) {
+                await axios.post(BOOK_LIST_URL, formData, { "Content-Type": "multipart/form-data" })
+                    .then((response) => {
+                        console.log(response);
+                        navigate('/books/list')
+                    })
+                    .catch((err) => { console.log(err) });
 
-        console.log(categories);
-        await axios.post(BOOK_LIST_URL, formData, { "Content-Type": "multipart/form-data" })
-            .then((response) => {
-                console.log(response);
+            }
+        } else {
+            if (file == '') {
+                const img = document.getElementsByTagName('img')
 
-                navigate('/books/list')
-            })
-            .catch((err) => { console.log(err) });
+                fetch(img.src)
+                    .then(res => console.log(res));
+                // .then(blob => {
+                //     const imageFile = new File([blob], img.alt, blob)
+                //     console.log(imageFile)
+                //     setFile(imageFile);
+
+                // })
+            }
+            formData.append('id', params.id);
+            if (name && description && author_id && createdBy && date && categories) {
+                // await axios.put(BOOK_LIST_URL, formData, { "Content-Type": "multipart/form-data" })
+                //     .then((response) => {
+                //         console.log(response);
+                //         navigate('/books/list')
+                //     })
+                //     .catch((err) => { console.log(err) });
+
+            }
+        }
+
+        setError("All fields must be filled!");
 
     }
-    // async function postImage(imageFile, url) {
-    //      await axios
-    //         .put(url, formData, { "Content-Type": "multipart/form-data" })
-    //         .then(() => { console.log("succesful POST request"); })
-    //         .catch((err) => console.log(err));
-
-    //     // if (response) {
-    //     //     setItems(response.data);
-    //     // }
-    // };
 
 
     async function getAllAuthors() {
@@ -96,9 +111,6 @@ export default function BookAddUpdateForm() {
     }
 
 
-
-
-
     function formatDate(date) {
         let month = date.getMonth() + 1;
         return date.getFullYear() + "-" + month + "-" + date.getDate();
@@ -112,17 +124,22 @@ export default function BookAddUpdateForm() {
             if (params.id) {
 
                 await axios.get(BOOK_LIST_URL + params.id)
-                    .then((res) => {
+                    .then(async (res) => {
                         setEdit(true);
                         setName(res.data.name);
                         setAuthorId(res.data.authorId);
                         setDate(res.data.date);
                         setDescription(res.data.description);
                         setAuthorName(authorList.filter(x => x.id === res.data.authorId)[0].name);
-
+                        setFileName(res.data.imageUrl);
+                        // setCategories
+                        await axios.get(CATEGORY_LIST_OF_BOOK + params.id)
+                            .then((res) => {
+                                setCategories(res.data);
+                            })
+                            .catch((err) => { console.log(err) });
                     })
                     .catch(err => console.log(err));
-
             }
         }
 
@@ -131,44 +148,57 @@ export default function BookAddUpdateForm() {
     }, [edit]);
 
     return (
-        <>
+        <><NavBar />
             <div className='form-div'>
                 <form className='form-body' >
                     <div className="form-group" >
-                        <label htmlFor="exampleInputEmail1">Title:</label>
+                        <label htmlFor="exampleInputEmail1">Title* :</label>
                         <input required name='name' type="text" value={name} onChange={(event) => setName(event.target.value)} className="form-control" id="exampleInputEmail1" placeholder="Enter title" />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="exampleInputPassword1">Description</label>
+                        <label htmlFor="exampleInputPassword1">Description* :</label>
                         <textarea required name='description' value={description} onChange={(event) => setDescription(event.target.value)} className="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
                     </div>
 
+                    {params.id && <div>
+                        <label>Current book cover:</label>
+                        <br />
+                        <img src={BOOK_COVER + params.id} alt={fileName} style={{ width: 200 + "px" }}></img>
+                    </div>}
                     <div className="form-group">
-                        <label htmlFor="image">Add book cover (image):</label>
+                        <label htmlFor="image">{params.id ? "Change" : "Add"} book cover (image)* :</label>
                         <input type="file" id="image" onChange={(e) => setFile(e.target.files[0])} />
                     </div>
+                    {localStorage.getItem("role") === "Administrator" &&
+                        <div className="form-group">
+                            <label htmlFor="author_id">Author *: </label>
+                            <select id="author_id" className="form-control" name="author_id" onChange={(event) => setAuthorId(event.target.value)}>
 
-                    <div className="form-group">
-                        <label htmlFor="author_id">Author: </label>
-                        <select id="author_id" className="form-control" name="author_id" onChange={(event) => setAuthorId(event.target.value)}>
+                                {edit ? <option selected={edit} value={author_id}>{authorName}</option> : <option>---</option>}
+                                {authorList.map((row) => (
+                                    <>
+                                        <option value={parseInt(row.id)}>{row.name}</option>
+                                    </>
+                                ))}
+                            </select>
+                        </div>
+                    }
 
-                            {edit ? <option selected={edit} value={author_id}>{authorName}</option> : <option>---</option>}
-                            {authorList.map((row) => (
-                                <>
-                                    <option value={parseInt(row.id)}>{row.name}</option>
-                                </>
-                            ))}
-                        </select>
-                    </div>
-                    <label >Categories: </label>
+                    <label >Categories* : </label>
                     {categoriesList.map((row) => (
                         <div className="form-check">
                             <input type="checkbox" className="form-check-input" onChange={(e) => handleCheckbox(e)} value={row.id} />
-                            <span>{row.name}</span>
+                            <span>{categories.filter(x => x == row.id).length == 1 ? <em><b>{row.name}</b></em> : row.name}</span>
                         </div>
                     ))}
-
-                    <button type="button" onClick={handleSubmit} className="btn btn-primary" >Submit</button>
+                    <br />
+                    <span><em><b>text in bold and emphasized is put for the current category</b></em></span>
+                    <span className="error">{validateError}</span>
+                    <br />
+                    {edit ?
+                        <button type="button" onClick={handleSubmit} className="btn btn-primary" ><MdEdit />Save changes</button>
+                        : <button type="button" onClick={handleSubmit} className="btn btn-primary" ><MdAdd />Submit</button>
+                    }
                 </form>
             </div></>
     );

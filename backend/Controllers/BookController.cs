@@ -10,6 +10,7 @@ using LibraryApp.Models;
 using Microsoft.AspNetCore.OData;
 using Microsoft.AspNetCore.OData.Query;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LibraryApp.Controllers
 {
@@ -28,13 +29,27 @@ namespace LibraryApp.Controllers
         }
 
         // GET: api/Book
-        [HttpGet]
-
-        public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
+        [HttpGet("Author/{author_id}")]
+        public IQueryable<Book> GetBooks(int author_id)
         {
-            return await _context.Books.ToListAsync();
+
+            return _context.Books.Where(b => b.AuthorId == author_id);
         }
 
+
+
+        [HttpGet("Admin/")]
+        [Authorize(Roles = "Administrator")]
+        public IQueryable BookListAuthorEndpoint()
+        {
+            var innerJoin = from b in _context.Books
+                            join a in _context.Authors
+                            on b.AuthorId equals a.Id
+                            select new { book = b, author = a.Name };
+
+
+            return innerJoin;
+        }
 
 
 
@@ -55,13 +70,16 @@ namespace LibraryApp.Controllers
         // PUT: api/Book/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBook(int id, Book book)
+        public async Task<IActionResult> PutBook(int id, [FromForm] Book book)
         {
             if (id != book.Id)
             {
                 return BadRequest();
             }
 
+            string uniqueFileName = UploadedFile(book);
+            // if (uniqueFileName != "")
+            book.ImageUrl = uniqueFileName;
             _context.Entry(book).State = EntityState.Modified;
 
             try
@@ -100,12 +118,11 @@ namespace LibraryApp.Controllers
             return uniqueFileName;
         }
 
-        [HttpGet("images-byte/{id}")]
+        [HttpGet("image-file/{id}")]
         public async Task<IActionResult> ReturnByteArray(int id)
         {
             var book = await _context.Books.FindAsync(id);
             var FileName = book.ImageUrl;
-            Console.WriteLine(FileName);
             byte[] imageArray = System.IO.File.ReadAllBytes(relativePath + FileName);
 
             return File(imageArray, MimeType);

@@ -27,16 +27,10 @@ namespace LibraryApp.Controllers
             return await _context.BookCategory.ToListAsync();
         }
 
-        // GET: api/BookCategory/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<BookCategory>> GetBookCategory(int id)
+        [HttpGet("book/{book_id}")]
+        public IQueryable<int> GetBookCategory(int book_id)
         {
-            var bookCategory = await _context.BookCategory.FindAsync(id);
-
-            if (bookCategory == null)
-            {
-                return NotFound();
-            }
+            var bookCategory = from e in _context.BookCategory where e.BookId == book_id select e.CategoryId;
 
             return bookCategory;
         }

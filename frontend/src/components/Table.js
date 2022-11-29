@@ -17,36 +17,81 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import AuthorList from "../pages/author/author-list";
-
-
+import { BOOK_LIST_ADMIN_ROLE, BOOK_LIST_OF_AUTHOR, BOOK_COVER } from "../constants";
 
 export function TableList(props) {
   const [items, setItems] = useState([]);
   const [open, setOpen] = useState(false);
   const [itemToBeDeleted, setItemToBeDeleted] = useState('');
-
   const navigate = useNavigate();
 
   const fetchProducts = async () => {
-    await axios
-      .get(props.URL)
+    if (localStorage.getItem('role') == 'Administrator' && props.book) {
+      await axios
+        .get(BOOK_LIST_ADMIN_ROLE, { headers: { 'Authorization': "Bearer " + localStorage.getItem('token') } })
+        .then((response) => {
+          setItems(response.data);
+          console.log(response.data);
+        })
+        .catch((err) => {
+          if (err.response.status == 401) {
+            localStorage.clear();
+          }
+        });
+
+    }
+    else if(!props.book){
+      await axios
+      .get(props.URL, { headers: { 'Authorization': "Bearer " + localStorage.getItem('token') } })
       .then((response) => {
         setItems(response.data);
+        console.log(response.data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        if (err.response.status == 401) {
+          localStorage.clear();
+        }
+      });
+    }
+    else {
 
-
+      await axios
+        .get(BOOK_LIST_OF_AUTHOR + localStorage.getItem("author_id"))
+        .then((response) => {
+          setItems(response.data);
+        })
+        .catch((err) => {
+          if (err.response.status == 401) {
+            localStorage.clear();
+          }
+        });
+    }
   };
 
 
   const itemsData = useMemo(() => [...items], [items]);
 
+  const authorColumn = useMemo(() => (props.book && localStorage.getItem('role') == "Administrator") ? items[0] ? Object.keys(items[0].author).map((key) => { return key; }) : [] : [], []);
+  const topColumns = useMemo(() => (props.book && localStorage.getItem('role') == "Administrator") ? items[0] ? Object.keys(items[0]).map((key) => { return key; }) : [] : [], [items]);
   const itemsColumns = useMemo(
     () =>
+      (props.book && localStorage.getItem('role') == "Administrator") ?
+        items[0]
+          ? Object.keys(items[0].book)
+            .filter((key) => (key !== "id" && key !== "createdAt" && key !== "createdBy" && key !== "imageUrl"))
+            .map((key) => {
+              return key;
+            })
+          : [] : []
+
+  );
+
+  const authorRoleCols = useMemo(
+    () =>
+
       items[0]
         ? Object.keys(items[0])
-          .filter((key) => (key !== "id" && key !== "createdAt" && key !== "createdBy" && key!=="imageUrl"))
+          .filter((key) => (key !== "id" && key !== "createdAt" && key !== "createdBy" && key !== "imageUrl" && key!=="bookCategories"&& key !== "authorId"))
           .map((key) => {
             return key;
           })
@@ -55,7 +100,6 @@ export function TableList(props) {
   );
 
   function onEdit(id) {
-    // console.log(id);
     navigate(props.navigate + id);
   }
 
@@ -86,41 +130,37 @@ export function TableList(props) {
   useEffect(() => {
 
     fetchProducts();
-
   }, [itemsData.length]);
 
 
   return (
     <>
-      {
 
-        <>
+      <div>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            Continue with the removal (deletion)?
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              {JSON.stringify(itemToBeDeleted)}
+            </DialogContentText>
+          </DialogContent>
 
-          <div>
-            <Dialog
-              open={open}
-              onClose={handleClose}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-            >
-              <DialogTitle id="alert-dialog-title">
-                Continue with the removal (deletion)?
-              </DialogTitle>
-              <DialogContent>
-                <DialogContentText>
-                  {JSON.stringify(itemToBeDeleted)}
-                </DialogContentText>
-              </DialogContent>
+          <DialogActions>
+            <Button onClick={() => { handleClose(false) }}>Disagree</Button>
+            <Button onClick={() => handleClose(true)} autoFocus>
+              Agree
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
 
-              <DialogActions>
-                <Button onClick={() => { handleClose(false) }}>Disagree</Button>
-                <Button onClick={() => handleClose(true)} autoFocus>
-                  Agree
-                </Button>
-              </DialogActions>
-            </Dialog>
-          </div>
-        </>}
 
 
 
@@ -128,34 +168,103 @@ export function TableList(props) {
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 400 }} aria-label="simple table">
           <TableHead>
-            <TableRow>
-              {itemsColumns.map((colHeader) => (
-                <TableCell>{colHeader.toLocaleUpperCase()}</TableCell>
+            {localStorage.getItem('role') == "Administrator" && props.book && <TableRow>
+              {topColumns.map((colHeader) => (
+                <TableCell align="center" className="header" colSpan={colHeader == "book" ? itemsColumns.length : 1}>{colHeader.toLocaleUpperCase()}</TableCell>
               ))}
-              <TableCell>EDIT</TableCell>
-              <TableCell>{"Delete".toLocaleUpperCase()}</TableCell>
+              <TableCell align="center" colSpan={2} className="action_cell">{"Action".toLocaleUpperCase()}</TableCell>
+
+            </TableRow>}
+            <TableRow>
+              {localStorage.getItem('role') == "Administrator" && props.book &&
+                <>
+                  {
+                    itemsColumns.map((colHeader) => (
+                      <TableCell className="book_cell">{colHeader.toLocaleUpperCase()}</TableCell>
+                    ))
+                  }{
+                    <TableCell className="author_cell">{"Author Name".toLocaleUpperCase()}</TableCell>
+                  }
+
+                </>
+              }
+
+              {
+                props.book == false &&
+                authorRoleCols.map((colHeader) => (
+                  <TableCell className="header" >{colHeader.toLocaleUpperCase()}</TableCell>
+                ))
+              }
+              {
+                localStorage.getItem('role') == "Author" &&
+                authorRoleCols.map((colHeader) => (
+                  <TableCell className="header" >{colHeader.toLocaleUpperCase()}</TableCell>
+                ))
+              }
+              <TableCell className="action_cell" >EDIT</TableCell>
+              <TableCell className="action_cell"> {"Delete".toLocaleUpperCase()}</TableCell>
             </TableRow>
+
           </TableHead>
           <TableBody>
             {itemsData.map((row) => (
               <TableRow
                 key={row.id}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                {itemsColumns.map((col) => (
-                  <TableCell>
-                    {col === "image"  ? <img alt={row[col]} src={"http://localhost:5006/api/Book/images-byte/"+row.id} width="200" /> : row[col]}
-                  </TableCell>
-                ))}
-                <TableCell key="edit">
-                  <Button size="small" variant="text" onClick={() => { onEdit(row.id) }}>
-                    <MdModeEdit size={20} />
-                  </Button>
-                </TableCell>
-                <TableCell key="delete">
-                  <Button size="small" variant="text" onClick={() => { onDelete(row) }}>
-                    <AiFillDelete size={20} />
-                  </Button>
-                </TableCell>
+                {
+
+                  localStorage.getItem('role') == "Administrator" && props.book &&
+                  <>
+                    {
+                      itemsColumns.map((col) => (
+
+                        <TableCell className="book_cell">{col == 'image' ? < img src={BOOK_COVER + row.book.id}></img> : row['book'][col]}</TableCell>
+                      ))
+                    }{
+                      <TableCell className="author_cell">{row['author']}</TableCell>
+                    }
+                  </>
+
+                }
+
+                {
+                  props.book == false && authorRoleCols.map((col) => (
+                    <TableCell >{row[col]}</TableCell>
+                  ))
+                }
+                {
+                  localStorage.getItem('role') == "Author" && authorRoleCols.map((col) => (
+                    <TableCell >{col == 'image' ? < img src={BOOK_COVER + row.id}></img> : row[col]}</TableCell>
+                  ))
+                }
+                {
+                  localStorage.getItem('role') == "Administrator" && <>
+                    <TableCell key="edit">
+                      <Button size="small" variant="text" onClick={() => { onEdit(row['book'].id) }}>
+                        <MdModeEdit size={20} />
+                      </Button>
+                    </TableCell>
+                    <TableCell key="delete">
+                      <Button size="small" variant="text" onClick={() => { onDelete(row['book']) }}>
+                        <AiFillDelete size={20} />
+                      </Button>
+                    </TableCell>
+                  </>
+                }
+                {
+                  localStorage.getItem('role') == "Author" && <>
+                    <TableCell key="edit">
+                      <Button size="small" variant="text" onClick={() => { onEdit(row.id) }}>
+                        <MdModeEdit size={20} />
+                      </Button>
+                    </TableCell>
+                    <TableCell key="delete">
+                      <Button size="small" variant="text" onClick={() => { onDelete(row) }}>
+                        <AiFillDelete size={20} />
+                      </Button>
+                    </TableCell>
+                  </>
+                }
               </TableRow>
             ))}
           </TableBody>

@@ -30,7 +30,8 @@ namespace LibraryApp.Controllers
             if (user != null)
             {
                 var token = Generate(user);
-                return Ok(new { user = user, token = token });
+                var author = _context.Authors.Where(a => a.User_id==user.Id);
+                return Ok(new { user = user, token = token, author = author });
             }
 
             return NotFound("User not found");

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LibraryApp.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LibraryApp.Controllers
 {
@@ -22,6 +23,8 @@ namespace LibraryApp.Controllers
         {
             return await _context.Authors.ToListAsync();
         }
+
+
 
         // GET: api/Author/5
         [HttpGet("{id}")]
